@@ -8,10 +8,13 @@ import (
 
 func main() {
 
-	issues, err := website.FetchIssues("golang", "go")
+	issues, err := website.ReadCacheIssues()
 	if err != nil {
-		fmt.Printf("Error fetching issues: %v\n", err)
-		return
+		issues, err = website.FetchIssues("golang", "go")
+		if err != nil {
+			fmt.Printf("Error fetching issues: %v\n", err)
+			return
+		}
 	}
 
 	for i, issue := range issues {

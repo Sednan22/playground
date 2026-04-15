@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
+
+const cacheFileName = "website/cache_issues.json"
 
 type User struct {
 	Login string `json:"login"`
@@ -42,23 +45,37 @@ func FetchIssues(owner, repo string) ([]Issue, error) {
 		return nil, err
 	}
 
+	CacheIssues(issues)
+
 	return issues, nil
 }
 
-/*
-// FOR LOOP TO FIND HOW DATA IS COMING FROM GET REQUEST | GOOD TO BUILD STRUCT
-for _, obj := range test {
-		for key, val := range obj {
-			if key == "user" {
-				userMap, ok := val.(map[string]interface{})
-				if ok {
-					for uKey, uVal := range userMap {
-						fmt.Printf("UserKey: %-15s | Val: %-20T\n", uKey, uVal)
-					}
-				}
-			} else {
-				fmt.Printf("Key: %-15s | Val: %-20T\n", key, val)
-			}
-		}
+func CacheIssues(issues []Issue) {
+
+	dat, err := json.MarshalIndent(issues, "", "  ")
+	if err != nil {
+		fmt.Printf("Error marshal issues: %v", err)
+		return
 	}
-*/
+
+	err = os.WriteFile(cacheFileName, dat, 0666)
+	if err != nil {
+		fmt.Printf("Error writing to file: %v", err)
+	}
+}
+
+func ReadCacheIssues() ([]Issue, error) {
+
+	dat, err := os.ReadFile(cacheFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	var issues []Issue
+	err = json.Unmarshal(dat, &issues)
+	if err != nil {
+		return nil, err
+	}
+
+	return issues, nil
+}
