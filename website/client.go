@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const cacheFileName = "website/cache_issues.json"
+const cacheFileName = "data/cache_issues.json"
 
 type User struct {
 	Login string `json:"login"`
