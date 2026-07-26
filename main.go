@@ -1,14 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 
-	err := FetchWebSite()
+	err := redisTest()
 	if err != nil {
-		fmt.Printf("Error in fetchWebSite: %v", err)
-		return
+		fmt.Print(err)
 	}
 
-	fmt.Println("Done")
 }
