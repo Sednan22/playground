@@ -4,12 +4,10 @@ Welcome to my personal laboratory! This is where I experiment with new technolog
 
 ## 🛠 What's inside?
 - **Experiments:** Random logic tests and "what if" scenarios.
-- **Prototypes:** Early-stage project ideas and architecture drafts.
 - **Learning Lab:** Code snippets from tutorials and documentation deep-dives.
 
 ## 🧪 Current Focus
-- [x] Mastering **Go (Golang)** modularity.
-- [x] Version control best practices.
+- [ ] Mastering **Go (Golang)** modularity.
 - [ ] **Backend Engineering:** Building robust APIs and server-side logic.
 - [ ] API integrations & Object Mapping.
 
@@ -17,4 +15,3 @@ Welcome to my personal laboratory! This is where I experiment with new technolog
 This is a **no-judgment zone**. The code here might be messy, experimental, or purely for academic purposes.
 
 ---
-*“Move fast and break things.”* 💻
