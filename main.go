@@ -51,14 +51,3 @@ func main() {
 	}
 
 }
-
-// params := map[string]string{
-// 	"market":      "20",
-// 	"float":       "0.95",
-// 	"moneyNewest": "0.92",
-// }
-
-// jsonBytes, err := json.Marshal(params)
-// if err != nil {
-// 	fmt.Println("Error converting JSON: ", err)
-// }
