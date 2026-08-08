@@ -1,4 +1,4 @@
-# 🚀 My Playground
+# 🚀 Playground
 
 Welcome to my personal laboratory! This is where I experiment with new technologies, break things, fix them, and level up my coding skills.
 
@@ -13,11 +13,5 @@ Welcome to my personal laboratory! This is where I experiment with new technolog
 
 ## 🚧 Rule #1
 This is a **no-judgment zone**. The code here might be messy, experimental, or purely for academic purposes.
-
-
-Motivation
-Quick Start
-Usage
-Contributing
 
 ---
