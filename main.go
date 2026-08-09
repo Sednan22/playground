@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(res2) // slice
+	// fmt.Println(res2) // slice
 
 	var result []string
 	err = json.Unmarshal([]byte(res2), &result)
@@ -44,7 +44,7 @@ func main() {
 
 	val := result[0] // string
 
-	fmt.Println(val)
+	// fmt.Println(val)
 
 	if val == "poo" {
 		fmt.Println("Works")
