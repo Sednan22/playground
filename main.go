@@ -28,8 +28,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	// fmt.Println(res2) // slice
+	// res2 is a slice
+	fmt.Println(res2)
 
 	var result []string
 	err = json.Unmarshal([]byte(res2), &result)
@@ -42,10 +42,10 @@ func main() {
 		return
 	}
 
-	val := result[0] // string
+	// val is a string
+	val := result[0] 
 
-	// fmt.Println(val)
-
+	// Comparing 2 strings
 	if val == "poo" {
 		fmt.Println("Works")
 	}
