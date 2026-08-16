@@ -1,53 +1,39 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
-	"os"
+	"log"
 
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
 )
-
-var ctx = context.Background()
 
 func main() {
 
-	err := godotenv.Load(".env")
+	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		log.Fatal("error loading .env")
+	}
+
+	cfgTokens, err := NewConfig()
+	if err != nil {
+		fmt.Println("error getting new config for jwt tokens")
 		return
 	}
 
-	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
-	rdb := redis.NewClient(opt)
-	defer rdb.Close()
-
-	res2, err := rdb.JSONGet(ctx, "test", "$.foo.bar").Result()
+	// using a new create token
+	token, err := CreateToken(cfgTokens, "1")
 	if err != nil {
-		panic(err)
-	}
-
-	// fmt.Println(res2) // slice
-
-	var result []string
-	err = json.Unmarshal([]byte(res2), &result)
-	if err != nil {
-		panic(err)
-	}
-
-	if len(result) != 1 {
-		fmt.Println("Got more or less than 1 val")
+		fmt.Println("error creating new access token")
 		return
 	}
 
-	val := result[0] // string
-
-	// fmt.Println(val)
-
-	if val == "poo" {
-		fmt.Println("Works")
+	// customToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+	_, err = ValidateToken(token, cfgTokens.TokenSecret)
+	if err != nil {
+		fmt.Println("error validating token", err)
+		return
 	}
+
+	fmt.Println("valid token")
 
 }
