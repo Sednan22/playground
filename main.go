@@ -1,62 +1,78 @@
 package main
 
 import (
-	"context"
+	"bytes"
 	"fmt"
-	"time"
+	"io"
+	"net/http"
+	"sync"
+
+	"golang.org/x/net/websocket"
 )
 
-type TestResponse struct {
-	Value bool
-	Err   error
+type Server struct {
+	mu    sync.RWMutex
+	conns map[*websocket.Conn]bool
+}
+
+func NewServer() *Server {
+	return &Server{
+		conns: make(map[*websocket.Conn]bool),
+	}
+}
+
+func (s *Server) handleWS(ws *websocket.Conn) {
+	fmt.Printf("new incoming connection from client: %s\n", ws.RemoteAddr())
+
+	s.mu.Lock()
+	s.conns[ws] = true
+	s.mu.Unlock()
+
+	s.readLoop(ws)
+}
+
+func (s *Server) readLoop(ws *websocket.Conn) {
+
+	defer func() {
+		ws.Close()
+		s.mu.Lock()
+		delete(s.conns, ws)
+		s.mu.Unlock()
+	}()
+
+	buf := make([]byte, 1024)
+	for {
+
+		n, err := ws.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Printf("error reading: %v", err)
+			break
+		}
+
+		msg := buf[:n]
+		cloneMsg := bytes.Clone(msg)
+		s.broadcoast(cloneMsg)
+	}
+}
+
+func (s *Server) broadcoast(b []byte) {
+
+	s.mu.RLock()
+	for ws := range s.conns {
+		go func(ws *websocket.Conn) {
+			if _, err := ws.Write(b); err != nil {
+				fmt.Printf("write error: %v\n", err)
+			}
+		}(ws)
+	}
+	s.mu.RUnlock()
 }
 
 func main() {
-
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, "key", "val")
-
-	start := time.Now()
-	response := someContext(ctx)
-	if response.Err != nil {
-		fmt.Println(response.Err)
-		return
-	}
-	fmt.Printf("Value come from fetchsomething = %v\n", response.Value)
-	fmt.Println("It took: ", time.Since(start))
-}
-
-func someContext(ctx context.Context) TestResponse {
-
-	valFromCtx := ctx.Value("key")
-	fmt.Println("Value come from ctx =", valFromCtx)
-
-	ctx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
-	defer cancel()
-
-	respch := make(chan TestResponse)
-
-	go func() {
-		val, err := fetchsomething()
-		respch <- TestResponse{
-			Value: val,
-			Err:   err,
-		}
-	}()
-
-	select {
-	case <-ctx.Done():
-		return TestResponse{Err: fmt.Errorf("fetch took to long.")}
-	case resp := <-respch:
-		return TestResponse{
-			Value: resp.Value,
-			Err:   resp.Err,
-		}
-	}
-
-}
-
-func fetchsomething() (bool, error) {
-	time.Sleep(10 * time.Millisecond)
-	return false, nil
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWS))
+	http.ListenAndServe(":3000", nil)
 }
