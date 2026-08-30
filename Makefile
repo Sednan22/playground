@@ -3,7 +3,7 @@
 all: build run
 
 build:
-	@go build -o test
+	@go build -o test ./cmd/
 
 run:
 	@./test
