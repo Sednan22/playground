@@ -1,27 +1,43 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"math/rand"
-	"time"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	start := time.Now()
-	loop := 0
-	randNumber := int64(10000)
-	randomness := int64(0)
-	for {
-		randNumber += rand.Int63n(10)
-		randomness += rand.Int63n(10)
+	accountID := flag.Int("account", 0, "account id")
+	flag.Parse()
 
-		if randomness > randNumber {
-			fmt.Printf("RandNumber number is: %d\n", randNumber)
-			fmt.Printf("DoNothing number is: %d\n", randomness)
-			fmt.Printf("It took %v and %d loops\n", time.Since(start), loop)
-			break
-		}
-		loop++
+	test := loadConfig(*accountID)
+	if *accountID == 0 {
+		log.Fatal("--account=x needed")
 	}
+
+	fmt.Println(test)
+
+}
+
+func loadConfig(accountID int) string {
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error: %v", err)
+	}
+
+	if accountID == 1 {
+		return os.Getenv("TEST1")
+	}
+	if accountID == 2 {
+		return os.Getenv("TEST2")
+	}
+	if accountID == 3 {
+		return os.Getenv("TEST3")
+	}
+
+	return "0"
 }
