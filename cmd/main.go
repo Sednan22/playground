@@ -14,13 +14,12 @@ func main() {
 	accountID := flag.Int("account", 0, "account id")
 	flag.Parse()
 
-	test := loadConfig(*accountID)
+	accountLoaded := loadConfig(*accountID)
 	if *accountID == 0 {
 		log.Fatal("--account=x needed")
 	}
 
-	fmt.Println(test)
-
+	fmt.Println(accountLoaded)
 }
 
 func loadConfig(accountID int) string {
