@@ -10,51 +10,40 @@ import (
 )
 
 type Account struct {
-	Name string
-	API string
+	id   int
+	name string
+	api  string
 }
 
 func main() {
 
 	accountID := flag.Int("account", 0, "account id")
 	flag.Parse()
-	
+
 	if *accountID == 0 {
-		log.Fatal("--account=x needed")
+		log.Fatalf("usage: %s --account=x", os.Args[0])
 	}
 
-	accountLoaded, err := loadConfig(*accountID)
-	if err != nil {
-		log.Fatal("accountLoaded failed")
+	accountLoaded := loadConfig(*accountID)
+	if accountLoaded.api == "" {
+		log.Fatal("failed loading account or account doesn't exist")
 	}
-	
-	fmt.Println(accountLoaded)
+
+	fmt.Println("ID:", accountLoaded.id, "| Name:", accountLoaded.name)
+
 }
 
-func loadConfig(accountID int) (Account, error) {
+func loadConfig(accountID int) Account {
 
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
-	if accountID == 1 {
-		return Account{
-			Name: "test1",
-			API: os.Getenv("TEST1")
-		},nil
-	}
-	if accountID == 2 {
-		return Account{
-			Name: "test2",
-			API: os.Getenv("TEST2")
-		},nil
-	}
-	if accountID == 3 {
-		return Account{
-			Name: "test3",
-			API: os.Getenv("TEST3")
-		},nil
+	var account = Account{
+		id:   accountID,
+		name: fmt.Sprintf("test%d", accountID),
+		api:  os.Getenv(fmt.Sprintf("TEST%d", accountID)),
 	}
 
-	return Account{}, fmt.Error("account not found")
+	return account
 }
