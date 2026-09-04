@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("usage: %s --account=x", os.Args[0])
 	}
 
-	accountLoaded := loadConfig(*accountID)
+	accountLoaded := loadAccount(*accountID)
 	if accountLoaded.api == "" {
 		log.Fatal("failed loading account or account doesn't exist")
 	}
@@ -33,17 +33,15 @@ func main() {
 
 }
 
-func loadConfig(accountID int) Account {
+func loadAccount(accountID int) Account {
 
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
-	var account = Account{
+	return Account{
 		id:   accountID,
 		name: fmt.Sprintf("test%d", accountID),
 		api:  os.Getenv(fmt.Sprintf("TEST%d", accountID)),
 	}
-
-	return account
 }
