@@ -1,47 +1,27 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
+	"math/rand"
 )
-
-type Account struct {
-	id   int
-	name string
-	api  string
-}
 
 func main() {
 
-	accountID := flag.Int("account", 0, "account id")
-	flag.Parse()
+	var loop, count int
+	percentage := int64(50)
 
-	if *accountID == 0 {
-		log.Fatalf("usage: %s --account=x", os.Args[0])
+	for count < 10 {
+
+		n := rand.Int63n(100)
+
+		if n <= percentage {
+			count++
+		} else {
+			count = 0
+		}
+		loop++
 	}
 
-	accountLoaded := loadAccount(*accountID)
-	if accountLoaded.api == "" {
-		log.Fatal("failed loading account or account doesn't exist")
-	}
+	fmt.Println("Loops:", loop)
 
-	fmt.Println("ID:", accountLoaded.id, "| Name:", accountLoaded.name)
-
-}
-
-func loadAccount(accountID int) Account {
-
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("error: %v", err)
-	}
-
-	return Account{
-		id:   accountID,
-		name: fmt.Sprintf("test%d", accountID),
-		api:  os.Getenv(fmt.Sprintf("TEST%d", accountID)),
-	}
 }
